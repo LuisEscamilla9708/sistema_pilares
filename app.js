@@ -73,22 +73,22 @@ function defaultDatabase() {
 
         students: [
             {
-                folio: "PIL-000101",
-                name: "Ana García",
+                folio: "9814NR010",
+                name: "ERNESTO VARGAS LUNA",
                 area: "Ciberescuela",
                 workshop: "Computación básica",
                 active: true
             },
             {
-                folio: "PIL-000102",
-                name: "Carlos López",
+                folio: "1129NL015",
+                name: "ELIZABETH ALEJANDRES SANCHEZ",
                 area: "Ciberescuela",
                 workshop: "Computación básica",
                 active: true
             },
             {
-                folio: "PIL-000103",
-                name: "Elena Díaz",
+                folio: "458DVA2",
+                name: "EVAN JOSEF PICHARDO CEDILLO",
                 area: "Cultura",
                 workshop: "Música",
                 active: true
