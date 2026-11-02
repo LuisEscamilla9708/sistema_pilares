@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PILARES CDMX | Registro de Visitas</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="estilos.css">
+</head>
+
+<body>
+
+<!-- ======================================
+     1. PANTALLA DE BIENVENIDA
+====================================== -->
+
+<section id="welcome" class="public-screen">
+
+    <header class="welcome-header">
+
+        <div class="brand-mark">
+            PILARES
+            <br>
+            <small>CDMX</small>
+        </div>
+
+        <strong>Sistema de Registro de Visitas</strong>
+
+        <button class="btn btn-wine ms-auto" onclick="showLogin()">
+            Ingresar
+        </button>
+
+    </header>
+
+    <main class="welcome-main">
+
+        <h1>¡Bienvenido a PILARES CDMX!</h1>
+
+        <p>
+            Escanea tu código QR para registrar tu entrada o salida
+        </p>
+
+        <div class="scanner-layout">
+
+            <div class="scanner-card">
+
+                <div class="scanner-icon">▣</div>
+
+                <label for="qrInput" class="small text-muted">
+                    Lector QR inalámbrico / folio de prueba
+                </label>
+
+                <input
+                    type="text"
+                    id="qrInput"
+                    class="form-control text-center"
+                    placeholder="Escanea o escribe el folio"
+                    autocomplete="off"
+                >
+
+                <button
+                    class="btn btn-wine w-100 mt-3"
+                    onclick="simulateScan()"
+                >
+                    Simular escaneo
+                </button>
+
+                <button
+                    class="btn btn-outline-secondary w-100 mt-2"
+                    onclick="cameraInfo()"
+                >
+                    Activar cámara
+                </button>
+
+            </div>
+
+            <div id="scanResult" class="result-card">
+
+                <span class="result-check">✓</span>
+
+                <h5>Esperando código QR</h5>
+
+                <small>Demostración visual</small>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer>
+        Prototipo visual · Datos de ejemplo
+    </footer>
+
+</section>
+
+
+<!-- ======================================
+     2. INICIO DE SESIÓN
+====================================== -->
+
+<section id="login" class="login-screen d-none">
+
+    <div class="login-brand">
+
+        <div class="logo-tile">
+            PILARES
+            <br>
+            CDMX
+        </div>
+
+        <h1>
+            Sistema de
+            <br>
+            Registro de
+            <br>
+            Visitas
+        </h1>
+
+        <span class="yellow-shape"></span>
+
+    </div>
+
+    <div class="login-panel">
+
+        <div class="login-card">
+
+            <h2>Acceso al sistema</h2>
+
+            <form id="loginForm">
+
+                <label for="username">Usuario</label>
+
+                <input
+                    type="text"
+                    id="username"
+                    class="form-control"
+                    placeholder="Nombre de usuario"
+                    autocomplete="username"
+                    required
+                >
+
+                <label for="password">Contraseña</label>
+
+                <input
+                    type="password"
+                    id="password"
+                    class="form-control"
+                    placeholder="Contraseña"
+                    autocomplete="current-password"
+                    required
+                >
+
+                <button type="submit" class="btn btn-wine w-100 mt-4">
+                    Iniciar sesión
+                </button>
+
+            </form>
+
+            <p class="mt-3 small text-muted">
+                Accesos de prueba:
+                <br>
+                docente / demo123
+                <br>
+                admin / demo123
+            </p>
+
+            <button
+                class="btn btn-link text-secondary"
+                onclick="showWelcome()"
+            >
+                Volver a bienvenida
+            </button>
+
+            <div id="loginError" class="alert alert-danger d-none">
+                Acceso denegado. Verifica tu usuario y contraseña.
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================
+     3. PANEL DEL SISTEMA
+====================================== -->
+
+<section id="application" class="app-shell d-none">
+
+    <!-- MENÚ LATERAL -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="sidebar-logo">
+
+            PILARES <small>CDMX</small>
+
+            <p>Sistema de Registro de Visitas</p>
+
+        </div>
+
+        <!--
+            JavaScript generará el menú según el rol.
+
+            DOCENTE:
+            - Inicio
+            - Alumnos y usuarios
+            - Registro de visitas
+            - Entradas y salidas
+            - Asistencias
+            - Historial
+            - Estadísticas
+            - Reportes
+            - Configuración
+
+            ADMINISTRADOR:
+            - Inicio
+            - Todas las áreas
+            - Todos los usuarios
+            - Visitas generales
+            - Estadísticas
+            - Reportes
+            - Gestión de cuentas
+            - Permisos
+            - Bitácora
+        -->
+
+        <nav id="sideNav"></nav>
+
+        <button class="side-link logout" onclick="logout()">
+            Cerrar sesión
+        </button>
+
+    </aside>
+
+
+    <!-- CONTENIDO PRINCIPAL -->
+
+    <div class="app-content">
+
+        <header class="app-top">
+
+            <button
+                class="btn btn-sm btn-outline-secondary mobile-menu"
+                onclick="toggleMenu()"
+                aria-label="Abrir menú"
+            >
+                ☰
+            </button>
+
+            <div>
+
+                <h2 id="pageTitle">
+                    Panel del área
+                </h2>
+
+                <small id="pageSubtitle">
+                    PILARES Tepalcates
+                </small>
+
+            </div>
+
+            <div class="ms-auto text-end">
+
+                <b id="userLabel">Responsable</b>
+
+                <div class="small" id="todayLabel"></div>
+
+            </div>
+
+        </header>
+
+
+        <!--
+            CONTENEDOR DE PESTAÑAS
+
+            Aquí JavaScript mostrará:
+            - Dashboard
+            - Alumnos
+            - Perfiles
+            - Entradas y salidas
+            - Historial
+            - Áreas
+            - Estadísticas
+            - Reportes
+        -->
+
+        <main id="pageContent" class="page-content"></main>
+
+
+        <footer class="app-footer">
+            Prototipo visual · Datos ficticios para revisión de interfaz
+        </footer>
+
+    </div>
+
+</section>
+
+
+<!-- ======================================
+     4. FORMULARIO PARA AGREGAR O EDITAR
+        ALUMNOS
+====================================== -->
+
+<div class="modal fade" id="editModal" tabindex="-1"
+     aria-labelledby="modalTitle" aria-hidden="true">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="modalTitle">
+                    Registrar alumno
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Cerrar"
+                ></button>
+
+            </div>
+
+            <form id="recordForm">
+
+                <div class="modal-body">
+
+                    <input type="hidden" id="recordIndex">
+
+                    <label for="recordFolio">Folio del QR</label>
+
+                    <input
+                        type="text"
+                        id="recordFolio"
+                        class="form-control mb-2"
+                        required
+                    >
+
+                    <label for="recordName">Nombre completo</label>
+
+                    <input
+                        type="text"
+                        id="recordName"
+                        class="form-control mb-2"
+                        required
+                    >
+
+                    <label for="recordArea">Área</label>
+
+                    <select id="recordArea" class="form-select mb-2">
+
+                        <option>Ciberescuela</option>
+                        <option>Cultura</option>
+                        <option>Deporte</option>
+                        <option>Autonomía Económica</option>
+
+                    </select>
+
+                    <label for="recordWorkshop">Taller</label>
+
+                    <input
+                        type="text"
+                        id="recordWorkshop"
+                        class="form-control mb-2"
+                        required
+                    >
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="btn btn-wine">
+                        Guardar
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ======================================
+     5. LIBRERÍAS JAVASCRIPT
+====================================== -->
+
+<!-- Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Gráficas -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+
+<!-- JavaScript del sistema -->
+<script src="app.js"></script>
+
+</body>
+</html>
