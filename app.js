@@ -496,13 +496,169 @@ function showScanResult(message, type) {
     `;
 }
 
-function cameraInfo() {
-    notify(
-        "La lectura mediante cámara todavía no está implementada. " +
-        "Puedes utilizar el lector QR inalámbrico si funciona " +
-        "como teclado, o escribir el folio para probar."
+/* ==========================================
+   LECTOR QR MEDIANTE CÁMARA
+========================================== */
+
+let qrScanner = null;
+let cameraRunning = false;
+let cameraStarting = false;
+let lastQR = "";
+let lastQRTime = 0;
+
+async function startCamera() {
+
+    if (cameraRunning || cameraStarting) return;
+
+    if (typeof Html5Qrcode === "undefined") {
+        alert("No se pudo cargar la librería QR.");
+        return;
+    }
+
+    if (!navigator.mediaDevices?.getUserMedia) {
+        alert(
+            "La cámara requiere HTTPS o localhost."
+        );
+        return;
+    }
+
+    cameraStarting = true;
+
+    const status = document.getElementById(
+        "cameraStatus"
     );
+
+    status.textContent = "Iniciando cámara...";
+
+    try {
+
+        qrScanner = new Html5Qrcode("qrReader");
+
+        await qrScanner.start(
+            {
+                facingMode: "environment"
+            },
+            {
+                fps: 10,
+                qrbox: {
+                    width: 230,
+                    height: 230
+                }
+            },
+            onQRCodeSuccess,
+            () => {}
+        );
+
+        cameraRunning = true;
+
+        status.textContent =
+            "Cámara activa. Acerca tu credencial.";
+
+        document.getElementById(
+            "startCameraBtn"
+        ).classList.add("d-none");
+
+        document.getElementById(
+            "stopCameraBtn"
+        ).classList.remove("d-none");
+
+    } catch (error) {
+
+        console.error("Error de cámara:", error);
+
+        status.textContent =
+            "No se pudo activar la cámara.";
+
+        alert(
+            "Revisa los permisos de cámara " +
+            "y verifica que estés usando " +
+            "HTTPS o localhost."
+        );
+
+        qrScanner = null;
+
+    } finally {
+        cameraStarting = false;
+    }
 }
+
+/* ==========================================
+   QR DETECTADO
+========================================== */
+
+function onQRCodeSuccess(decodedText) {
+
+    const folio = decodedText.trim();
+
+    if (!folio) return;
+
+    const now = Date.now();
+
+    // Evitar lecturas repetidas del mismo QR
+    if (
+        folio === lastQR &&
+        now - lastQRTime < 5000
+    ) {
+        return;
+    }
+
+    lastQR = folio;
+    lastQRTime = now;
+
+    const input = document.getElementById(
+        "qrInput"
+    );
+
+    input.value = folio;
+
+    // Utiliza el registro de entrada/salida
+    // que ya existe en el sistema.
+    simulateScan();
+}
+
+/* ==========================================
+   DETENER CÁMARA
+========================================== */
+
+async function stopCamera() {
+
+    if (!qrScanner || cameraStarting) return;
+
+    try {
+
+        if (cameraRunning) {
+            await qrScanner.stop();
+        }
+
+        qrScanner.clear();
+
+    } catch (error) {
+        console.error(
+            "Error al detener cámara:",
+            error
+        );
+    } finally {
+
+        qrScanner = null;
+        cameraRunning = false;
+
+        document.getElementById(
+            "cameraStatus"
+        ).textContent = "Cámara desactivada";
+
+        document.getElementById(
+            "startCameraBtn"
+        ).classList.remove("d-none");
+
+        document.getElementById(
+            "stopCameraBtn"
+        ).classList.add("d-none");
+    }
+}
+
+
+
+
 
 /* ==========================================
    MENÚ Y NAVEGACIÓN
